@@ -1,0 +1,36 @@
+{
+  "name": "distributed-load-testing",
+  "version": "1.0.0",
+  "description": "A scalable controller–worker load-generation system for benchmarking backend performance under real, production-like traffic.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node src/cli/loadtest.ts",
+    "build": "tsc",
+    "start:controller": "ts-node src/controller/index.ts",
+    "start:worker": "ts-node src/worker/server.ts",
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d2r3v/distributed-load-testing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/d2r3v/distributed-load-testing/issues"
+  },
+  "homepage": "https://github.com/d2r3v/distributed-load-testing#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.2",
+    "@types/node-fetch": "^2.6.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
