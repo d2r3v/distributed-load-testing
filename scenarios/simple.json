@@ -1,0 +1,13 @@
+{
+    "targetBaseUrl": "https://google.ca",
+    "durationSeconds": 10,
+    "targetRps": 20,
+    "concurrentUsers": 1,
+    "requests": [
+        {
+            "name": "google",
+            "method": "GET",
+            "path": "/"
+        }
+    ]
+}
