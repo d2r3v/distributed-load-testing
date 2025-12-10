@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "ts-node src/cli/loadtest.ts",
     "build": "tsc",
-    "start:controller": "ts-node src/controller/index.ts",
     "start:worker": "ts-node src/worker/server.ts",
+    "start:controller": "ts-node src/controller/index.ts",
     "test": "echo \"No tests yet\""
   },
   "repository": {
