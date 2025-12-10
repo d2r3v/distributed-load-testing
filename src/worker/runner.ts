@@ -8,22 +8,31 @@ export async function runScenario(scenario: Scenario): Promise<AggregateMetrics>
     const start = Date.now();
     const end = start + scenario.durationSeconds * 1000;
 
-    const interval = 1000 / scenario.targetRps;
-    let next = start;
+    let tokens = 0;
+    const ratePerMs = scenario.targetRps / 1000; // tokens added per ms
 
+    // Scheduler loop runs every 1ms
     while (Date.now() < end) {
         const now = Date.now();
-        if (now >= next) {
-            next += interval;
-            void fireOnce(scenario, metrics);
-        } else {
-            await new Promise(r => setTimeout(r, next - now));
+
+        // add tokens
+        tokens += ratePerMs;
+
+        // fire as many requests as tokens allow
+        while (tokens >= 1) {
+            tokens -= 1;
+            fireOnce(scenario, metrics); // no await → async dispatch
         }
+
+        // avoid event-loop starvation
+        await new Promise(r => setTimeout(r, 1));
     }
 
-    await new Promise(r => setTimeout(r, 2000)); // let inflight requests finish
+    // let in-flight requests finish
+    await new Promise(r => setTimeout(r, 2000));
     return metrics;
 }
+
 
 async function fireOnce(scenario: Scenario, metrics: AggregateMetrics) {
     const req = choose(scenario.requests);
@@ -43,7 +52,7 @@ async function fireOnce(scenario: Scenario, metrics: AggregateMetrics) {
         });
 
         const latency = performance.now() - start;
-        recordSample(metrics, req.name, latency, res.ok);
+        recordSample(metrics, req.name, latency, res.status < 400);
     } catch {
         const latency = performance.now() - start;
         recordSample(metrics, req.name, latency, false);
