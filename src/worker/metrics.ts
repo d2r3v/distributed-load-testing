@@ -27,8 +27,19 @@ export function recordSample(
     stats.latencies.push(latencyMs);
 }
 
-export function summarize(metrics: AggregateMetrics) {
-    const result: Record<string, any> = {};
+export interface RequestSummary {
+    count: number;
+    successRate: number;
+    avgLatency: number;
+    p50: number;
+    p90: number;
+    p99: number;
+}
+
+export type Summary = Record<string, RequestSummary>;
+
+export function summarize(metrics: AggregateMetrics): Summary {
+    const result: Summary = {};
 
     const percentile = (arr: number[], p: number) => {
         if (arr.length === 0) return 0;
@@ -38,7 +49,10 @@ export function summarize(metrics: AggregateMetrics) {
 
     for (const [name, s] of Object.entries(metrics)) {
         const sorted = [...s.latencies].sort((a, b) => a - b);
-        const avg = sorted.reduce((a, b) => a + b, 0) / (sorted.length || 1);
+        const avg =
+            sorted.length === 0
+                ? 0
+                : sorted.reduce((a, b) => a + b, 0) / sorted.length;
 
         result[name] = {
             count: s.count,
